@@ -21,6 +21,8 @@ FEditorListener::FEditorListener():
 {
 	OnPostEngineInitDelegateHandle = FCoreDelegates::OnPostEngineInit.AddRaw(this, &FEditorListener::OnPostEngineInit);
 
+	OnEnginePreExitDelegateHandle = FCoreDelegates::OnEnginePreExit.AddRaw(this, &FEditorListener::OnEnginePreExit);
+
 	OnPreBeginPIEDelegateHandle = FEditorDelegates::PreBeginPIE.AddRaw(this, &FEditorListener::OnPreBeginPIE);
 
 	OnPrePIEEndedDelegateHandle = FEditorDelegates::PrePIEEnded.AddRaw(this, &FEditorListener::OnPrePIEEnded);
@@ -123,6 +125,11 @@ FEditorListener::~FEditorListener()
 	{
 		FCoreDelegates::OnPostEngineInit.Remove(OnPostEngineInitDelegateHandle);
 	}
+
+	if (OnEnginePreExitDelegateHandle.IsValid())
+	{
+		FCoreDelegates::OnEnginePreExit.Remove(OnEnginePreExitDelegateHandle);
+	}
 }
 
 void FEditorListener::OnPostEngineInit()
@@ -130,12 +137,19 @@ void FEditorListener::OnPostEngineInit()
 	FCodeAnalysis::CodeAnalysis();
 
 	FDynamicGenerator::CodeAnalysisGenerator();
+
+	FEngineListener::SetActive(true);
 }
 
-void FEditorListener::OnPreBeginPIE(const bool bIsSimulating)
+void FEditorListener::OnEnginePreExit()
 {
-	bIsPIEPlaying = true;
+	FEngineListener::SetActive(false);
+}
 
+void RestartEnv()
+{
+	FEngineListener::SetActive(false);
+	
 	while (FCSharpCompiler::Get().IsCompiling())
 	{
 		FThreadHeartBeat::Get().HeartBeat();
@@ -148,8 +162,15 @@ void FEditorListener::OnPreBeginPIE(const bool bIsSimulating)
 
 		FTaskGraphInterface::Get().ProcessThreadUntilIdle(ENamedThreads::GameThread);
 	}
+	
+	FEngineListener::SetActive(true);
+}
 
-	FEngineListener::OnPreBeginPIE(bIsSimulating);
+
+void FEditorListener::OnPreBeginPIE(const bool bIsSimulating)
+{
+	bIsPIEPlaying = true;
+	RestartEnv();
 }
 
 void FEditorListener::OnPrePIEEnded(const bool bIsSimulating)
@@ -159,8 +180,7 @@ void FEditorListener::OnPrePIEEnded(const bool bIsSimulating)
 
 void FEditorListener::OnCancelPIE()
 {
-	FEngineListener::OnCancelPIE();
-
+	RestartEnv();
 	bIsPIEPlaying = false;
 }
 
@@ -235,6 +255,8 @@ void FEditorListener::OnCompile(const TArray<FFileChangeData>& InFileChangeData)
 		}
 
 		FDynamicGenerator::SetCodeAnalysisDynamicFilesMap();
+
+		RestartEnv();
 	}
 }
 

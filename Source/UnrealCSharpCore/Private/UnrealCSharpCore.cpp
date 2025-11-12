@@ -2,6 +2,7 @@
 
 #include "UnrealCSharpCore.h"
 #include "Delegate/FUnrealCSharpCoreModuleDelegates.h"
+#include "Log/UnrealCSharpLog.h"
 
 #define LOCTEXT_NAMESPACE "FUnrealCSharpCoreModule"
 
@@ -18,6 +19,8 @@ void FUnrealCSharpCoreModule::ShutdownModule()
 
 void FUnrealCSharpCoreModule::SetActive(const bool InbIsActive)
 {
+	UE_LOG(LogUnrealCSharp, Log, TEXT("UnrealCSharp.SetActive %d->%d"), bIsActive, InbIsActive);
+
 	if (bIsActive != InbIsActive)
 	{
 		bIsActive = InbIsActive;

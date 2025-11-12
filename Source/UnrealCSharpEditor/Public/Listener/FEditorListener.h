@@ -12,6 +12,8 @@ public:
 private:
 	void OnPostEngineInit();
 
+	void OnEnginePreExit();
+
 	void OnPreBeginPIE(const bool bIsSimulating);
 
 	void OnPrePIEEnded(const bool bIsSimulating);
@@ -45,6 +47,8 @@ private:
 
 private:
 	FDelegateHandle OnPostEngineInitDelegateHandle;
+
+	FDelegateHandle OnEnginePreExitDelegateHandle;
 
 	FDelegateHandle OnPreBeginPIEDelegateHandle;
 
