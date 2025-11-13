@@ -255,8 +255,6 @@ void FEditorListener::OnCompile(const TArray<FFileChangeData>& InFileChangeData)
 		}
 
 		FDynamicGenerator::SetCodeAnalysisDynamicFilesMap();
-
-		RestartEnv();
 	}
 }
 
