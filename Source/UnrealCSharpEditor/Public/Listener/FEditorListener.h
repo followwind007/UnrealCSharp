@@ -42,6 +42,8 @@ private:
 
 	void OnDirectoryChanged(const TArray<FFileChangeData>& InFileChanges);
 
+	void OnPublishDirectoryChanged(const TArray<FFileChangeData>& InFileChanges);
+
 private:
 	void OnAssetChanged(const FAssetData& InAssetData, const TFunction<void()>& InGenerator) const;
 

@@ -18,6 +18,9 @@ void FUnrealCSharpEditorCommands::RegisterCommands()
 	UI_COMMAND(OpenRuntimeSettings, "Open Runtime Settings", "Open UnrealCSharpRuntime Settings Action",
 	           EUserInterfaceActionType::Button, FInputChord());
 
+	UI_COMMAND(RestartCSharp, "Restart CSharp", "Restart CSharp Action",
+			   EUserInterfaceActionType::Button, FInputChord());
+
 	UI_COMMAND(OpenFile, "Open File", "Open File Action",
 	           EUserInterfaceActionType::Button, FInputChord());
 

@@ -60,6 +60,13 @@ FEditorListener::FEditorListener():
 			IDirectoryWatcher::WatchOptions::IncludeDirectoryChanges
 		);
 	}
+
+	DirectoryWatcherModule.Get()->RegisterDirectoryChangedCallback_Handle(
+		FUnrealCSharpFunctionLibrary::GetFullPublishDirectory(),
+		IDirectoryWatcher::FDirectoryChanged::CreateRaw(this, &FEditorListener::OnPublishDirectoryChanged),
+			OnDirectoryChangedDelegateHandle,
+			IDirectoryWatcher::WatchOptions::IncludeDirectoryChanges
+		);
 }
 
 FEditorListener::~FEditorListener()
@@ -377,6 +384,17 @@ void FEditorListener::OnDirectoryChanged(const TArray<FFileChangeData>& InFileCh
 				}
 			}
 		}
+	}
+}
+
+void FEditorListener::OnPublishDirectoryChanged(const TArray<FFileChangeData>& InFileChanges)
+{
+	UE_LOG(LogTemp, Log, TEXT("UnrealCSharp Publish Change %d"), InFileChanges.Num());
+
+	if (InFileChanges.Num() > 0)
+	{
+		FEngineListener::SetActive(false);
+		FEngineListener::SetActive(true);
 	}
 }
 

@@ -30,6 +30,8 @@ public:
 
 	TSharedPtr<FUICommandInfo> OpenRuntimeSettings;
 
+	TSharedPtr<FUICommandInfo> RestartCSharp;
+
 	TSharedPtr<FUICommandInfo> OpenFile;
 
 	TSharedPtr<FUICommandInfo> CodeAnalysis;

@@ -4,6 +4,7 @@
 #include "UnrealCSharpEditor.h"
 #include "UnrealCSharpEditorCommands.h"
 #include "Common/FUnrealCSharpFunctionLibrary.h"
+#include "Listener/FEngineListener.h"
 #include "NewClass/DynamicNewClassUtils.h"
 
 #define LOCTEXT_NAMESPACE "UnrealCSharpPlayToolBar"
@@ -74,6 +75,14 @@ void FUnrealCSharpPlayToolBar::BuildAction()
 				SettingsModule->ShowViewer("Project", "Plugins", "UnrealCSharpSettings");
 			}
 		}), FCanExecuteAction());
+
+	CommandList->MapAction(
+		FUnrealCSharpEditorCommands::Get().RestartCSharp,
+		FExecuteAction::CreateLambda([]
+		{
+			FEngineListener::SetActive(false);
+			FEngineListener::SetActive(true);
+		}), FCanExecuteAction());
 }
 
 TSharedRef<SWidget> FUnrealCSharpPlayToolBar::GeneratePlayToolBarMenu()
@@ -95,6 +104,9 @@ TSharedRef<SWidget> FUnrealCSharpPlayToolBar::GeneratePlayToolBarMenu()
 
 	MenuBuilder.AddMenuEntry(Commands.OpenRuntimeSettings, NAME_None,
 	                         LOCTEXT("OpenRuntimeSettings", "Open RuntimeSettings"));
+
+	MenuBuilder.AddMenuEntry(Commands.RestartCSharp, NAME_None,
+							 LOCTEXT("RestartCSharp", "Restart CSharp"));
 
 	MenuBuilder.EndSection();
 
